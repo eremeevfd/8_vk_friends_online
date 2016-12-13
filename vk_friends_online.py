@@ -1,15 +1,15 @@
 import vk
 
 
-APP_ID = 5761423  # чтобы получить app_id, нужно зарегистрировать своё приложение на https://vk.com/dev
+APP_ID = 5761423
 
 
 def get_user_login():
-    return input()
+    return input("Enter your login: ")
 
 
 def get_user_password():
-    return input()
+    return input("Enter your password: ")
 
 
 def get_online_friends(login, password):
@@ -21,7 +21,8 @@ def get_online_friends(login, password):
             scope='friends'
         )
         api = vk.API(session)
-        return api.friends.get(fields='name')
+        friends = api.friends.get(fields='online')
+        return [friend for friend in friends if friend['online']==1]
     except vk.exceptions.VkAuthError:
         print("Incorrect Login and/or Password")
         exit()
@@ -29,14 +30,11 @@ def get_online_friends(login, password):
 
 def output_friends_to_console(friends_online):
     for friend in friends_online:
-        if friend.get('online'):
-            print(friend.get('first_name'), friend.get('last_name'))
+        print(friend['first_name'], friend['last_name'])
 
 
 if __name__ == '__main__':
-    print("Enter your login: ")
     login = get_user_login()
-    print("Enter your password: ")
     password = get_user_password()
     friends_online = get_online_friends(login, password)
     print("List of your online friends: ")
